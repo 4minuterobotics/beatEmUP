@@ -1,0 +1,11 @@
+sprite sheet height: 170px
+sprite sheet image placement: bottom /left
+
+start{
+    pics: 20
+    sprite sheet width: 154 px
+}
+
+idle{
+    
+}
