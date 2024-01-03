@@ -3,11 +3,35 @@ import spriteRunLeft from '../img/spriteRunLeft.png';
 import spriteStandLeft from '../img/spriteStandLeft.png';
 import spriteStandRight from '../img/spriteStandRight.png';
 
+import spriteStart from '../img/start-sprite-sheet.png';
+import spriteIdleLeft from '../img/idle-left-spritesheet.png';
+import spriteIdleRight from '../img/idle-right-spritesheet.png';
+import spriteWalkLeft from '../img/walk-left-sprite.png';
+import spriteWalkRight from '../img/walk-right-sprite.png';
+import spriteSwipeLeft from '../img/swipe-left-spritesheet.png';
+import spriteSwipeRight from '../img/swipe-right-spritesheet.png';
+import spritePunchLeft from '../img/punch-left-spritesheet.png';
+import spritePunchRight from '../img/punch-right-spritesheet.png';
+import spriteBiteLeft from '../img/bite-left-spritesheet.png';
+import spriteBiteRight from '../img/bite-right-spritesheet.png';
+
 //these variables store the image objects
 let playerStandLeftImage = createImage(spriteStandLeft);
 let playerStandRightImage = createImage(spriteStandRight);
 let playerRunLeftImage = createImage(spriteRunLeft);
 let playerRunRightImage = createImage(spriteRunRight);
+
+let playerStartImage = createImage(spriteStart);
+let playerIdleLeftImage = createImage(spriteIdleLeft);
+let playerIdleRightImage = createImage(spriteIdleRight);
+let playerWalkLeftImage = createImage(spriteWalkLeft);
+let playerWalkRightImage = createImage(spriteWalkRight);
+let playerSwipeLeftImage = createImage(spriteSwipeLeft);
+let playerSwipeRightImage = createImage(spriteSwipeRight);
+let playerPunchLeftImage = createImage(spritePunchLeft);
+let playerPunchRightImage = createImage(spritePunchRight);
+let playerBiteLeftImage = createImage(spriteBiteLeft);
+let playerBiteRightImage = createImage(spriteBiteRight);
 
 const canvas = document.querySelector('canvas');
 const c = canvas.getContext('2d');
@@ -19,7 +43,7 @@ class Player {
 		//the player properties
 		this.position = {
 			x: 100,
-			y: 400,
+			y: canvas.height - 400,
 		};
 		this.velocity = {
 			//"1"
@@ -27,28 +51,34 @@ class Player {
 			y: 0,
 		};
 		this.speed = 5;
-		this.width = 66;
-		this.height = 150;
-		this.image = playerStandRightImage;
+		this.width = 380;
+		this.height = 150 * 4;
+		// this.image = playerStartImage;
+		this.startAnimation = true;
+		this.doingSomething = false;
 		this.frames = 0;
+		this.spriteTimer = 0;
 		this.sprites = {
+			start: {
+				playerStartImage,
+			},
 			stand: {
-				right: createImage(spriteStandRight),
-				left: playerStandLeftImage,
+				right: playerIdleRightImage,
+				left: playerIdleLeftImage,
 
-				cropWidth: 177,
-				width: 66,
+				cropWidth: 380,
+				width: 380,
 			},
 			run: {
-				right: createImage(spriteRunRight),
-				left: playerRunLeftImage,
+				right: playerWalkRightImage,
+				left: playerWalkLeftImage,
 
-				cropWidth: 341,
-				width: 127.875,
+				cropWidth: 380,
+				width: 380,
 			},
 		};
-		this.currentSprite = this.sprites.stand.right;
-		this.currentCropWidth = 177;
+		this.currentSprite = playerStartImage;
+		this.currentCropWidth = 380;
 	}
 
 	//the player methods
@@ -62,7 +92,7 @@ class Player {
 
 		c.drawImage(
 			this.currentSprite, // sprite image
-			this.currentCropWidth * this.frames, //sub rectangele x-position  (starts at 0 and increaes by the width of each animation)
+			this.currentCropWidth * this.spriteTimer, //sub rectangele x-position  (starts at 0 and increaes by the width of each animation)
 			0, // sub rectangle y-position
 			this.currentCropWidth, // sub rectangle width (width of 1 animation)
 			400, // sub rectangle height
@@ -75,11 +105,24 @@ class Player {
 
 	update() {
 		this.frames++; // incremementing this number by 1 will create a multiplier for the x position of the sprite sheet for animation
-		if (this.frames > 59 && (this.currentSprite == this.sprites.stand.right || this.currentSprite == this.sprites.stand.left)) {
+		if (this.frames % 10 == 0) {
+			this.spriteTimer++;
+		}
+
+		//stop the starting animation after 20 frames and reset the frames
+		if (this.spriteTimer == 20 && this.startAnimation == true) {
+			this.startAnimation = false;
+			this.frames = 0;
+			this.spriteTimer = 0;
+			this.currentSprite = this.sprites.stand.right;
+		}
+		if (this.spriteTimer == 13 && (this.currentSprite == this.sprites.stand.right || this.currentSprite == this.sprites.stand.left)) {
 			// reset the frames value to zero once the value for frames equals the number of sprites for that animation
 			this.frames = 0;
-		} else if (this.frames > 29 && (this.currentSprite == this.sprites.run.right || this.currentSprite == this.sprites.run.left)) {
+			this.spriteTimer = 0;
+		} else if (this.spriteTimer == 10 && (this.currentSprite == this.sprites.run.right || this.currentSprite == this.sprites.run.left)) {
 			this.frames = 0;
+			this.spriteTimer = 0;
 		}
 
 		//"2"

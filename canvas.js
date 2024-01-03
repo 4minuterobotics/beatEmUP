@@ -70,7 +70,7 @@ let stage1decor = []; //tanks n stuff
 let supportBeams = []; //  support beams
 
 // button state
-let lastKey;
+let lastKey = 'right';
 const keys = {
 	right: {
 		pressed: false,
@@ -359,115 +359,133 @@ function animate() {
 	//don't move the player
 	//if the right key is pressed, subtract 5 from the platform x-position value
 	//if the left key is pressed, add 5 to the platform x-position value
-	if (direction.right == true && player.position.x < 400) {
-		player.velocity.x = player.speed;
-	} else if ((direction.upRight == true || direction.downRight == true) && player.position.x < 400) {
-		player.velocity.x = player.speed / 2;
-	} else if ((direction.left == true && player.position.x > 100) || (direction.left == true && scrollOffset == 0 && player.position.x > 0)) {
-		player.velocity.x = -player.speed;
-	} else if (
-		((direction.upLeft == true || direction.downLeft == true) && player.position.x > 100) ||
-		((direction.upLeft == true || direction.downLeft == true) && scrollOffset == 0 && player.position.x > 0)
-	) {
-		player.velocity.x = -player.speed / 2;
-	} else if (
-		direction.right == false &&
-		direction.upRight == false &&
-		direction.downRight == false &&
-		direction.left == false &&
-		direction.upLeft == false &&
-		direction.downLeft == false
-	) {
-		player.velocity.x = 0;
-	} else {
-		player.velocity.x = 0;
-		if (direction.right == true) {
-			scrollOffset += player.speed;
-			platforms.forEach((platform) => {
-				platform.position.x -= player.speed;
-			});
-			supportBeams.forEach((beam) => {
-				beam.position.x -= player.speed;
-			});
-			stage1decor.forEach((item) => {
-				item.position.x -= player.speed * 0.66;
-			});
-			stage1backgrounds.forEach((background) => {
-				background.position.x -= player.speed * 0.66; // move the background hills a little slower than everything else
-			});
-		} else if (direction.upRight == true || direction.downRight == true) {
-			scrollOffset += player.speed / 2;
-			stage1decor.forEach((item) => {
-				item.position.x -= (player.speed * 0.66) / 2;
-			});
-			platforms.forEach((platform) => {
-				platform.position.x -= player.speed / 2;
-			});
-			supportBeams.forEach((beam) => {
-				beam.position.x -= player.speed / 2;
-			});
-			stage1backgrounds.forEach((background) => {
-				background.position.x -= (player.speed * 0.66) / 2; // move the background hills a little slower than everything else
-			});
-		} else if (direction.left == true && scrollOffset > 0) {
-			scrollOffset -= player.speed;
-			stage1decor.forEach((item) => {
-				item.position.x += player.speed * 0.66;
-			});
-			platforms.forEach((platform) => {
-				platform.position.x += player.speed;
-			});
-			supportBeams.forEach((beam) => {
-				beam.position.x += player.speed;
-			});
+	if (player.doingSomething == false && player.startAnimation == false) {
+		if (direction.right == true && player.position.x < 400) {
+			player.velocity.x = player.speed;
+		} else if ((direction.upRight == true || direction.downRight == true) && player.position.x < 400) {
+			player.velocity.x = player.speed / 2;
+		} else if ((direction.left == true && player.position.x > 100) || (direction.left == true && scrollOffset == 0 && player.position.x > 0)) {
+			player.velocity.x = -player.speed;
+		} else if (
+			((direction.upLeft == true || direction.downLeft == true) && player.position.x > 100) ||
+			((direction.upLeft == true || direction.downLeft == true) && scrollOffset == 0 && player.position.x > 0)
+		) {
+			player.velocity.x = -player.speed / 2;
+		} else if (
+			direction.right == false &&
+			direction.upRight == false &&
+			direction.downRight == false &&
+			direction.left == false &&
+			direction.upLeft == false &&
+			direction.downLeft == false
+		) {
+			player.velocity.x = 0;
+		} else {
+			player.velocity.x = 0;
+			if (direction.right == true) {
+				scrollOffset += player.speed;
+				platforms.forEach((platform) => {
+					platform.position.x -= player.speed;
+				});
+				supportBeams.forEach((beam) => {
+					beam.position.x -= player.speed;
+				});
+				stage1decor.forEach((item) => {
+					item.position.x -= player.speed * 0.66;
+				});
+				stage1backgrounds.forEach((background) => {
+					background.position.x -= player.speed * 0.66; // move the background hills a little slower than everything else
+				});
+			} else if (direction.upRight == true || direction.downRight == true) {
+				scrollOffset += player.speed / 2;
+				stage1decor.forEach((item) => {
+					item.position.x -= (player.speed * 0.66) / 2;
+				});
+				platforms.forEach((platform) => {
+					platform.position.x -= player.speed / 2;
+				});
+				supportBeams.forEach((beam) => {
+					beam.position.x -= player.speed / 2;
+				});
+				stage1backgrounds.forEach((background) => {
+					background.position.x -= (player.speed * 0.66) / 2; // move the background hills a little slower than everything else
+				});
+			} else if (direction.left == true && scrollOffset > 0) {
+				scrollOffset -= player.speed;
+				stage1decor.forEach((item) => {
+					item.position.x += player.speed * 0.66;
+				});
+				platforms.forEach((platform) => {
+					platform.position.x += player.speed;
+				});
+				supportBeams.forEach((beam) => {
+					beam.position.x += player.speed;
+				});
 
-			stage1backgrounds.forEach((background) => {
-				background.position.x += player.speed * 0.66; // move the background hills a little slower than everything else
-			});
-		} else if ((direction.upLeft == true || direction.downLeft == true) && scrollOffset > 0) {
-			scrollOffset -= player.speed / 2;
-			stage1decor.forEach((item) => {
-				item.position.x += (player.speed * 0.66) / 2;
-			});
-			platforms.forEach((platform) => {
-				platform.position.x += player.speed / 2;
-			});
-			supportBeams.forEach((beam) => {
-				beam.position.x += player.speed / 2;
-			});
-			stage1backgrounds.forEach((background) => {
-				background.position.x += (player.speed * 0.66) / 2; // move the background hills a little slower than everything else
-			});
+				stage1backgrounds.forEach((background) => {
+					background.position.x += player.speed * 0.66; // move the background hills a little slower than everything else
+				});
+			} else if ((direction.upLeft == true || direction.downLeft == true) && scrollOffset > 0) {
+				scrollOffset -= player.speed / 2;
+				stage1decor.forEach((item) => {
+					item.position.x += (player.speed * 0.66) / 2;
+				});
+				platforms.forEach((platform) => {
+					platform.position.x += player.speed / 2;
+				});
+				supportBeams.forEach((beam) => {
+					beam.position.x += player.speed / 2;
+				});
+				stage1backgrounds.forEach((background) => {
+					background.position.x += (player.speed * 0.66) / 2; // move the background hills a little slower than everything else
+				});
+			}
 		}
 	}
 
+	console.log(
+		'direction.down: ',
+		direction.down,
+		' Player y-position: ',
+		player.position.y,
+		' player height: ',
+		player.height,
+		'canvas height: ',
+		canvas.height,
+		' player y-pos + player height: ',
+		player.position.y + player.height,
+		' can move down: ',
+		player.position.y + player.height <= canvas.height
+	);
 	/***********Vertical movement **************/
-	// console.log('player y position', player.position.y);
-	if (direction.up == true && player.position.y >= canvas.height - 370) {
-		player.velocity.y = -player.speed;
-		// console.log('go up. Player position :', player.position);
-	} else if ((direction.upRight == true || direction.upLeft == true) && player.position.y >= canvas.height - 370) {
-		player.velocity.y = -player.speed / 2;
-		// console.log('go angled up. Player position :', player.position);
-	} else if (direction.down == true && player.position.y + player.height <= canvas.height) {
-		player.velocity.y = player.speed;
-		// console.log('go down. Player position :', player.position);
-	} else if ((direction.downRight == true || direction.downLeft == true) && player.position.y + player.height <= canvas.height) {
-		player.velocity.y = player.speed / 2;
-		// console.log('go angled down. Player position :', player.position);
-	} else if (
-		direction.up == false &&
-		direction.upRight == false &&
-		direction.upLeft == false &&
-		direction.down == false &&
-		direction.downRight == false &&
-		direction.downLeft == false
-	) {
-		player.velocity.y = 0;
-	} else {
-		player.velocity.y = 0;
-	}
+	if (player.doingSomething == false && player.startAnimation == false) {
+		// console.log('player y position', player.position.y);
+		if (direction.up == true && player.position.y >= canvas.height - 480) {
+			player.velocity.y = -player.speed;
 
+			// console.log('go up. Player position :', player.position);
+		} else if ((direction.upRight == true || direction.upLeft == true) && player.position.y >= canvas.height - 480) {
+			player.velocity.y = -player.speed / 2;
+			// console.log('go angled up. Player position :', player.position);
+		} else if (direction.down == true && player.position.y + player.height - 290 <= canvas.height) {
+			player.velocity.y = player.speed;
+			// console.log('go down. Player position :', player.position);
+		} else if ((direction.downRight == true || direction.downLeft == true) && player.position.y + player.height - 290 <= canvas.height) {
+			player.velocity.y = player.speed / 2;
+			// console.log('go angled down. Player position :', player.position);
+		} else if (
+			direction.up == false &&
+			direction.upRight == false &&
+			direction.upLeft == false &&
+			direction.down == false &&
+			direction.downRight == false &&
+			direction.downLeft == false
+		) {
+			player.velocity.y = 0;
+		} else {
+			player.velocity.y = 0;
+		}
+	}
 	//win scenario
 	if ((scrollOffset > platformImage.width * 5 + 400 - 2, 470)) {
 		//console.log('you win');
@@ -520,44 +538,49 @@ function animate() {
 	// console.log(lastDirection);
 	// console.log(direction == lastDirection);
 	// console.log('json equal: ', JSON.stringify(direction) === JSON.stringify(lastDirection), ' objects equal :', direction == lastDirection);
-
-	if (JSON.stringify(direction) !== JSON.stringify(lastDirection)) {
-		lastDirection = JSON.stringify(direction);
-		if (
-			(direction.up == true || direction.down == true || direction.right == true || direction.upRight == true || direction.downRight == true) &&
-			lastKey == 'right' &&
-			player.currentSprite != player.sprites.run.right
-		) {
-			player.frames = 0;
-			player.currentSprite = player.sprites.run.right;
-			player.currentCropWidth = player.sprites.run.cropWidth;
-			player.width = player.sprites.run.width;
-		} else if (
-			(direction.up == true || direction.down == true || direction.left == true || direction.upLeft == true || direction.downLeft == true) &&
-			lastKey == 'left' &&
-			player.currentSprite != player.sprites.run.left
-		) {
-			player.frames = 0;
-			player.currentSprite = player.sprites.run.left;
-			player.currentCropWidth = player.sprites.run.cropWidth;
-			player.width = player.sprites.run.width;
-		} else if (direction.stop == true && lastKey == 'left' && player.currentSprite != player.sprites.stand.left) {
-			player.frames = 0;
-			player.currentSprite = player.sprites.stand.left;
-			player.currentCropWidth = player.sprites.stand.cropWidth;
-			player.width = player.sprites.stand.width;
-		} else if (direction.stop == true && lastKey == 'right' && player.currentSprite != player.sprites.stand.right) {
-			player.frames = 0;
-			player.currentSprite = player.sprites.stand.right;
-			player.currentCropWidth = player.sprites.stand.cropWidth;
-			player.width = player.sprites.stand.width;
+	if (player.doingSomething == false && player.startAnimation == false) {
+		if (JSON.stringify(direction) !== JSON.stringify(lastDirection)) {
+			lastDirection = JSON.stringify(direction);
+			if (
+				(direction.up == true || direction.down == true || direction.right == true || direction.upRight == true || direction.downRight == true) &&
+				lastKey == 'right' &&
+				player.currentSprite != player.sprites.run.right
+			) {
+				player.frames = 0;
+				player.spriteTimer = 0;
+				player.currentSprite = player.sprites.run.right;
+				player.currentCropWidth = player.sprites.run.cropWidth;
+				player.width = player.sprites.run.width;
+			} else if (
+				(direction.up == true || direction.down == true || direction.left == true || direction.upLeft == true || direction.downLeft == true) &&
+				lastKey == 'left' &&
+				player.currentSprite != player.sprites.run.left
+			) {
+				player.frames = 0;
+				player.spriteTimer = 0;
+				player.currentSprite = player.sprites.run.left;
+				player.currentCropWidth = player.sprites.run.cropWidth;
+				player.width = player.sprites.run.width;
+			} else if (direction.stop == true && lastKey == 'left' && player.currentSprite != player.sprites.stand.left) {
+				player.frames = 0;
+				player.spriteTimer = 0;
+				player.currentSprite = player.sprites.stand.left;
+				player.currentCropWidth = player.sprites.stand.cropWidth;
+				player.width = player.sprites.stand.width;
+			} else if (direction.stop == true && lastKey == 'right' && player.currentSprite != player.sprites.stand.right) {
+				player.frames = 0;
+				player.spriteTimer = 0;
+				player.currentSprite = player.sprites.stand.right;
+				player.currentCropWidth = player.sprites.stand.cropWidth;
+				player.width = player.sprites.stand.width;
+			}
 		}
 	}
 }
 
 // add event listeners for the keys. specify as a string what event is getting called
 window.addEventListener('keydown', (event) => {
-	// console.log(event);
+	console.log(event);
 	switch (event.key) {
 		case 'ArrowUp':
 			//console.log('up');
@@ -610,3 +633,88 @@ window.addEventListener('keyup', (event) => {
 	}
 	// console.log(keys.right.pressed);
 });
+
+/*
+function calcPics() {
+	let start = {
+		pics: 20,
+		width: 7600,
+		name: 'start',
+	};
+
+	let idle = {
+		pics: 13,
+		width: 4940,
+		name: 'idle',
+	};
+
+	let bite = {
+		pics: 8,
+		width: 3040,
+		name: 'bite',
+	};
+
+	let swipe = {
+		pics: 7,
+		width: 2660,
+		name: 'swipe',
+	};
+
+	let punch = {
+		pics: 3,
+		width: 1140,
+		name: 'punch',
+	};
+
+	let special = {
+		pics: 18,
+		width: 6840,
+		name: 'special',
+	};
+
+	let crawl = {
+		pics: 9,
+		width: 3420,
+		name: 'crawl',
+	};
+
+	let walk = {
+		pics: 10,
+		width: 3800,
+		name: 'walk',
+	};
+
+	let currentSelection = start;
+
+	let pics = currentSelection.pics;
+	console.log('');
+	console.log('');
+	console.log('sprite sheet dimensions for: ', currentSelection.pics, ' ', currentSelection.name, ' pics.');
+	console.log('width: ', currentSelection.width);
+	console.log('height: 200');
+
+	if (currentSelection == walk) {
+		for (let i = 0; i < pics; i++) {
+			let leftFootFacingRight = 380 * i + 380 / 2 - 25 + 40;
+			console.log('Image ', i + 1, ' Facing right, booty: ', leftFootFacingRight);
+		}
+		console.log('------------------');
+		for (let i = 0; i < pics; i++) {
+			let rightFootFacingLeft = 380 * i + 380 / 2 + 25 - 40;
+			console.log('Image ', i + 1, ' Facing left, booty: ', rightFootFacingLeft);
+		}
+	} else {
+		for (let i = 0; i < pics; i++) {
+			let leftFootFacingRight = 380 * i + 380 / 2 - 25;
+			console.log('Image ', i + 1, ' Facing right, left foot: ', leftFootFacingRight);
+		}
+		console.log('------------------');
+		for (let i = 0; i < pics; i++) {
+			let rightFootFacingLeft = 380 * i + 380 / 2 + 25;
+			console.log('Image ', i + 1, ' Facing left, right foot: ', rightFootFacingLeft);
+		}
+	}
+}
+
+calcPics();
+*/
