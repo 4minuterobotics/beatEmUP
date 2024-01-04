@@ -16,7 +16,7 @@ import Platform from './classes/platform';
 
 const canvas = document.querySelector('canvas');
 const c = canvas.getContext('2d');
-const gravity = 1; //"9"
+const gravity = 1;
 //set the canvas to be the full width and height of the screen
 // canvas.width = window.innerWidth;
 // canvas.height = window.innerHeight;
@@ -33,11 +33,6 @@ let tank2Image = createImage(tank2);
 let tank3Image = createImage(tank3);
 let backImage = createImage(back);
 let supportImage = createImage(support);
-
-let playerStandLeftImage = createImage(spriteStandLeft);
-let playerStandRightImage = createImage(spriteStandRight);
-let playerRunLeftImage = createImage(spriteRunLeft);
-let playerRunRightImage = createImage(spriteRunRight);
 
 //background image values
 let bgWidth = 800 * 1.5;
@@ -71,7 +66,7 @@ let supportBeams = []; //  support beams
 
 // button state
 let lastKey = 'right';
-const keys = {
+let keys = {
 	right: {
 		pressed: false,
 	},
@@ -82,6 +77,18 @@ const keys = {
 		pressed: false,
 	},
 	down: {
+		pressed: false,
+	},
+};
+
+let actionKeys = {
+	space: {
+		pressed: false,
+	},
+	b: {
+		pressed: false,
+	},
+	s: {
 		pressed: false,
 	},
 };
@@ -220,126 +227,148 @@ function animate() {
 		item.draw();
 	});
 
-	//draw the platforms
-	// platforms.forEach((platform) => {
-	// 	platform.draw();
-	// });
-
 	//upadate the player spite frame number and crop position, then draws the sprite onto the screen, then updates its positon value
-	player.update(); //"7"
+	player.update();
 
 	//draw the support beams
 	supportBeams.forEach((beam) => {
 		beam.draw();
 	});
 
+	/*************** action states ************/
+	//punching
+	if (actionKeys.space.pressed == true) {
+		player.action.punch = true;
+	}
+	//biting
+	else if (actionKeys.b.pressed == true) {
+		player.action.bite = true;
+	}
+	//swiping
+	else if (actionKeys.s.pressed == true) {
+		player.action.swipe = true;
+	}
+
 	/************** direction states ************/
-	//right
-	if (keys.right.pressed == true && keys.left.pressed == false && keys.up.pressed == false && keys.down.pressed == false) {
-		direction.right = true;
-		direction.left = false;
-		direction.up = false;
-		direction.down = false;
-		direction.upRight = false;
-		direction.downRight = false;
-		direction.upLeft = false;
-		direction.downLeft = false;
-		direction.stop = false;
-		// console.log('right pressed');
-	}
-	//left
-	else if (keys.right.pressed == false && keys.left.pressed == true && keys.up.pressed == false && keys.down.pressed == false) {
-		direction.right = false;
-		direction.left = true;
-		direction.up = false;
-		direction.down = false;
-		direction.upRight = false;
-		direction.downRight = false;
-		direction.upLeft = false;
-		direction.downLeft = false;
-		direction.stop = false;
-		// console.log('left pressed');
-	}
-	//up
-	else if (keys.right.pressed == false && keys.left.pressed == false && keys.up.pressed == true && keys.down.pressed == false) {
-		direction.right = false;
-		direction.left = false;
-		direction.up = true;
-		direction.down = false;
-		direction.upRight = false;
-		direction.downRight = false;
-		direction.upLeft = false;
-		direction.downLeft = false;
-		direction.stop = false;
-		// console.log('up pressed');
-	}
-	//down
-	else if (keys.right.pressed == false && keys.left.pressed == false && keys.up.pressed == false && keys.down.pressed == true) {
-		direction.right = false;
-		direction.left = false;
-		direction.up = false;
-		direction.down = true;
-		direction.upRight = false;
-		direction.downRight = false;
-		direction.upLeft = false;
-		direction.downLeft = false;
-		direction.stop = false;
-		// console.log('down pressed');
-	}
-	//up right
-	else if (keys.right.pressed == true && keys.left.pressed == false && keys.up.pressed == true && keys.down.pressed == false) {
-		// console.log('up right pressed');
-		direction.right = false;
-		direction.left = false;
-		direction.up = false;
-		direction.down = false;
-		direction.upRight = true;
-		direction.downRight = false;
-		direction.upLeft = false;
-		direction.downLeft = false;
-		direction.stop = false;
-	}
-	//down right
-	else if (keys.right.pressed == true && keys.left.pressed == false && keys.up.pressed == false && keys.down.pressed == true) {
-		// console.log('down right pressed');
-		direction.right = false;
-		direction.left = false;
-		direction.up = false;
-		direction.down = false;
-		direction.upRight = false;
-		direction.downRight = true;
-		direction.upLeft = false;
-		direction.downLeft = false;
-		direction.stop = false;
-	}
-	//up left
-	else if (keys.right.pressed == false && keys.left.pressed == true && keys.up.pressed == true && keys.down.pressed == false) {
-		// console.log('up left pressed');
-		direction.right = false;
-		direction.left = false;
-		direction.up = false;
-		direction.down = false;
-		direction.upRight = false;
-		direction.downRight = false;
-		direction.upLeft = true;
-		direction.downLeft = false;
-		direction.stop = false;
-	}
-	//down left
-	else if (keys.right.pressed == false && keys.left.pressed == true && keys.up.pressed == false && keys.down.pressed == true) {
-		// console.log('down left pressed');
-		direction.right = false;
-		direction.left = false;
-		direction.up = false;
-		direction.down = false;
-		direction.upRight = false;
-		direction.downRight = false;
-		direction.upLeft = false;
-		direction.downLeft = true;
-		direction.stop = false;
-	}
-	//nothing pressed
-	else if (keys.right.pressed == false && keys.left.pressed == false && keys.up.pressed == false && keys.down.pressed == false) {
+	if (player.doingSomething == false) {
+		//right
+		if (keys.right.pressed == true && keys.left.pressed == false && keys.up.pressed == false && keys.down.pressed == false) {
+			direction.right = true;
+			direction.left = false;
+			direction.up = false;
+			direction.down = false;
+			direction.upRight = false;
+			direction.downRight = false;
+			direction.upLeft = false;
+			direction.downLeft = false;
+			direction.stop = false;
+			// console.log('right pressed');
+		}
+		//left
+		else if (keys.right.pressed == false && keys.left.pressed == true && keys.up.pressed == false && keys.down.pressed == false) {
+			direction.right = false;
+			direction.left = true;
+			direction.up = false;
+			direction.down = false;
+			direction.upRight = false;
+			direction.downRight = false;
+			direction.upLeft = false;
+			direction.downLeft = false;
+			direction.stop = false;
+			// console.log('left pressed');
+		}
+		//up
+		else if (keys.right.pressed == false && keys.left.pressed == false && keys.up.pressed == true && keys.down.pressed == false) {
+			direction.right = false;
+			direction.left = false;
+			direction.up = true;
+			direction.down = false;
+			direction.upRight = false;
+			direction.downRight = false;
+			direction.upLeft = false;
+			direction.downLeft = false;
+			direction.stop = false;
+			// console.log('up pressed');
+		}
+		//down
+		else if (keys.right.pressed == false && keys.left.pressed == false && keys.up.pressed == false && keys.down.pressed == true) {
+			direction.right = false;
+			direction.left = false;
+			direction.up = false;
+			direction.down = true;
+			direction.upRight = false;
+			direction.downRight = false;
+			direction.upLeft = false;
+			direction.downLeft = false;
+			direction.stop = false;
+			// console.log('down pressed');
+		}
+		//up right
+		else if (keys.right.pressed == true && keys.left.pressed == false && keys.up.pressed == true && keys.down.pressed == false) {
+			// console.log('up right pressed');
+			direction.right = false;
+			direction.left = false;
+			direction.up = false;
+			direction.down = false;
+			direction.upRight = true;
+			direction.downRight = false;
+			direction.upLeft = false;
+			direction.downLeft = false;
+			direction.stop = false;
+		}
+		//down right
+		else if (keys.right.pressed == true && keys.left.pressed == false && keys.up.pressed == false && keys.down.pressed == true) {
+			// console.log('down right pressed');
+			direction.right = false;
+			direction.left = false;
+			direction.up = false;
+			direction.down = false;
+			direction.upRight = false;
+			direction.downRight = true;
+			direction.upLeft = false;
+			direction.downLeft = false;
+			direction.stop = false;
+		}
+		//up left
+		else if (keys.right.pressed == false && keys.left.pressed == true && keys.up.pressed == true && keys.down.pressed == false) {
+			// console.log('up left pressed');
+			direction.right = false;
+			direction.left = false;
+			direction.up = false;
+			direction.down = false;
+			direction.upRight = false;
+			direction.downRight = false;
+			direction.upLeft = true;
+			direction.downLeft = false;
+			direction.stop = false;
+		}
+		//down left
+		else if (keys.right.pressed == false && keys.left.pressed == true && keys.up.pressed == false && keys.down.pressed == true) {
+			// console.log('down left pressed');
+			direction.right = false;
+			direction.left = false;
+			direction.up = false;
+			direction.down = false;
+			direction.upRight = false;
+			direction.downRight = false;
+			direction.upLeft = false;
+			direction.downLeft = true;
+			direction.stop = false;
+		}
+		//nothing pressed
+		else if (keys.right.pressed == false && keys.left.pressed == false && keys.up.pressed == false && keys.down.pressed == false) {
+			// console.log('Nothing pressed');
+			direction.right = false;
+			direction.left = false;
+			direction.up = false;
+			direction.down = false;
+			direction.upRight = false;
+			direction.downRight = false;
+			direction.upLeft = false;
+			direction.downLeft = false;
+			direction.stop = true;
+		}
+	} else {
 		// console.log('Nothing pressed');
 		direction.right = false;
 		direction.left = false;
@@ -351,7 +380,6 @@ function animate() {
 		direction.downLeft = false;
 		direction.stop = true;
 	}
-
 	/*************lateral movement and platform scrolling **************/
 	// if the right arrow key is pressed and the player x-position is less than 400 px, make the player x-velocity (change in position) +5
 	// otherwise if the left key is pressed and the player x-position is greater than 100 px, make the player x-velocity (change in position) -5
@@ -359,7 +387,7 @@ function animate() {
 	//don't move the player
 	//if the right key is pressed, subtract 5 from the platform x-position value
 	//if the left key is pressed, add 5 to the platform x-position value
-	if (player.doingSomething == false && player.startAnimation == false) {
+	if (player.doingSomething == false) {
 		if (direction.right == true && player.position.x < 400) {
 			player.velocity.x = player.speed;
 		} else if ((direction.upRight == true || direction.downRight == true) && player.position.x < 400) {
@@ -442,50 +470,35 @@ function animate() {
 			}
 		}
 	}
-
-	console.log(
-		'direction.down: ',
-		direction.down,
-		' Player y-position: ',
-		player.position.y,
-		' player height: ',
-		player.height,
-		'canvas height: ',
-		canvas.height,
-		' player y-pos + player height: ',
-		player.position.y + player.height,
-		' can move down: ',
-		player.position.y + player.height <= canvas.height
-	);
 	/***********Vertical movement **************/
-	if (player.doingSomething == false && player.startAnimation == false) {
-		// console.log('player y position', player.position.y);
-		if (direction.up == true && player.position.y >= canvas.height - 480) {
-			player.velocity.y = -player.speed;
 
-			// console.log('go up. Player position :', player.position);
-		} else if ((direction.upRight == true || direction.upLeft == true) && player.position.y >= canvas.height - 480) {
-			player.velocity.y = -player.speed / 2;
-			// console.log('go angled up. Player position :', player.position);
-		} else if (direction.down == true && player.position.y + player.height - 290 <= canvas.height) {
-			player.velocity.y = player.speed;
-			// console.log('go down. Player position :', player.position);
-		} else if ((direction.downRight == true || direction.downLeft == true) && player.position.y + player.height - 290 <= canvas.height) {
-			player.velocity.y = player.speed / 2;
-			// console.log('go angled down. Player position :', player.position);
-		} else if (
-			direction.up == false &&
-			direction.upRight == false &&
-			direction.upLeft == false &&
-			direction.down == false &&
-			direction.downRight == false &&
-			direction.downLeft == false
-		) {
-			player.velocity.y = 0;
-		} else {
-			player.velocity.y = 0;
-		}
+	// console.log('player y position', player.position.y);
+	if (direction.up == true && player.position.y >= canvas.height - 480) {
+		player.velocity.y = -player.speed;
+
+		// console.log('go up. Player position :', player.position);
+	} else if ((direction.upRight == true || direction.upLeft == true) && player.position.y >= canvas.height - 480) {
+		player.velocity.y = -player.speed / 2;
+		// console.log('go angled up. Player position :', player.position);
+	} else if (direction.down == true && player.position.y + player.height - 290 <= canvas.height) {
+		player.velocity.y = player.speed;
+		// console.log('go down. Player position :', player.position);
+	} else if ((direction.downRight == true || direction.downLeft == true) && player.position.y + player.height - 290 <= canvas.height) {
+		player.velocity.y = player.speed / 2;
+		// console.log('go angled down. Player position :', player.position);
+	} else if (
+		direction.up == false &&
+		direction.upRight == false &&
+		direction.upLeft == false &&
+		direction.down == false &&
+		direction.downRight == false &&
+		direction.downLeft == false
+	) {
+		player.velocity.y = 0;
+	} else {
+		player.velocity.y = 0;
 	}
+
 	//win scenario
 	if ((scrollOffset > platformImage.width * 5 + 400 - 2, 470)) {
 		//console.log('you win');
@@ -538,41 +551,90 @@ function animate() {
 	// console.log(lastDirection);
 	// console.log(direction == lastDirection);
 	// console.log('json equal: ', JSON.stringify(direction) === JSON.stringify(lastDirection), ' objects equal :', direction == lastDirection);
-	if (player.doingSomething == false && player.startAnimation == false) {
-		if (JSON.stringify(direction) !== JSON.stringify(lastDirection)) {
-			lastDirection = JSON.stringify(direction);
-			if (
-				(direction.up == true || direction.down == true || direction.right == true || direction.upRight == true || direction.downRight == true) &&
-				lastKey == 'right' &&
-				player.currentSprite != player.sprites.run.right
-			) {
+	if (JSON.stringify(direction) !== JSON.stringify(lastDirection) && player.doingSomething == false) {
+		lastDirection = JSON.stringify(direction);
+		if (
+			(direction.up == true || direction.down == true || direction.right == true || direction.upRight == true || direction.downRight == true) &&
+			lastKey == 'right' &&
+			player.currentSprite != player.sprites.run.right
+		) {
+			player.frames = 0;
+			player.spriteTimer = 0;
+			player.currentSprite = player.sprites.run.right;
+			player.lastDirection = 'right';
+			player.currentCropWidth = player.sprites.run.cropWidth;
+			player.width = player.sprites.run.width;
+		} else if (
+			(direction.up == true || direction.down == true || direction.left == true || direction.upLeft == true || direction.downLeft == true) &&
+			lastKey == 'left' &&
+			player.currentSprite != player.sprites.run.left
+		) {
+			player.frames = 0;
+			player.spriteTimer = 0;
+			player.currentSprite = player.sprites.run.left;
+			player.lastDirection = 'left';
+			player.currentCropWidth = player.sprites.run.cropWidth;
+			player.width = player.sprites.run.width;
+		} else if (direction.stop == true && lastKey == 'left' && player.currentSprite != player.sprites.stand.left) {
+			player.frames = 0;
+			player.spriteTimer = 0;
+			player.currentSprite = player.sprites.stand.left;
+			player.currentCropWidth = player.sprites.stand.cropWidth;
+			player.width = player.sprites.stand.width;
+		} else if (direction.stop == true && lastKey == 'right' && player.currentSprite != player.sprites.stand.right) {
+			player.frames = 0;
+			player.spriteTimer = 0;
+			player.currentSprite = player.sprites.stand.right;
+			player.currentCropWidth = player.sprites.stand.cropWidth;
+			player.width = player.sprites.stand.width;
+		}
+	}
+
+	if (player.doingSomething == false) {
+		if (player.action.punch == true) {
+			player.doingSomething = true;
+			if (lastKey == 'right') {
 				player.frames = 0;
 				player.spriteTimer = 0;
-				player.currentSprite = player.sprites.run.right;
-				player.currentCropWidth = player.sprites.run.cropWidth;
-				player.width = player.sprites.run.width;
-			} else if (
-				(direction.up == true || direction.down == true || direction.left == true || direction.upLeft == true || direction.downLeft == true) &&
-				lastKey == 'left' &&
-				player.currentSprite != player.sprites.run.left
-			) {
+				player.currentSprite = player.sprites.punch.right;
+				player.velocity.y = 0;
+				player.velocity.x = 0;
+			} else if (lastKey == 'left') {
 				player.frames = 0;
 				player.spriteTimer = 0;
-				player.currentSprite = player.sprites.run.left;
-				player.currentCropWidth = player.sprites.run.cropWidth;
-				player.width = player.sprites.run.width;
-			} else if (direction.stop == true && lastKey == 'left' && player.currentSprite != player.sprites.stand.left) {
+				player.currentSprite = player.sprites.punch.left;
+				player.velocity.y = 0;
+				player.velocity.x = 0;
+			}
+		} else if (player.action.bite == true) {
+			player.doingSomething = true;
+			if (lastKey == 'right') {
 				player.frames = 0;
 				player.spriteTimer = 0;
-				player.currentSprite = player.sprites.stand.left;
-				player.currentCropWidth = player.sprites.stand.cropWidth;
-				player.width = player.sprites.stand.width;
-			} else if (direction.stop == true && lastKey == 'right' && player.currentSprite != player.sprites.stand.right) {
+				player.currentSprite = player.sprites.bite.right;
+				player.velocity.y = 0;
+				player.velocity.x = 0;
+			} else if (lastKey == 'left') {
 				player.frames = 0;
 				player.spriteTimer = 0;
-				player.currentSprite = player.sprites.stand.right;
-				player.currentCropWidth = player.sprites.stand.cropWidth;
-				player.width = player.sprites.stand.width;
+				player.currentSprite = player.sprites.bite.left;
+				player.velocity.y = 0;
+				player.velocity.x = 0;
+			}
+		} else if (player.action.swipe == true) {
+			player.doingSomething = true;
+			if (lastKey == 'right') {
+				player.frames = 0;
+				player.spriteTimer = 0;
+				player.currentSprite = player.sprites.swipe.right;
+				player.velocity.y = 0;
+				player.velocity.x = 0;
+			} else if (lastKey == 'left') {
+				player.frames = 0;
+				player.spriteTimer = 0;
+				player.currentSprite = player.sprites.swipe.left;
+				player.velocity.y = 0;
+				player.velocity.x = 0;
 			}
 		}
 	}
@@ -584,24 +646,52 @@ window.addEventListener('keydown', (event) => {
 	switch (event.key) {
 		case 'ArrowUp':
 			//console.log('up');
-			keys.up.pressed = true;
+			if (player.startAnimation == false && player.doingSomething == false) {
+				keys.up.pressed = true;
+			}
 			break;
 
 		case 'ArrowDown':
 			// console.log('down');
-			keys.down.pressed = true;
+			if (player.startAnimation == false && player.doingSomething == false) {
+				keys.down.pressed = true;
+			}
 			break;
 
 		case 'ArrowLeft':
 			// console.log('left');
-			keys.left.pressed = true;
-			lastKey = 'left';
+			if (player.startAnimation == false && player.doingSomething == false) {
+				keys.left.pressed = true;
+				lastKey = 'left';
+			}
 			break;
 
 		case 'ArrowRight':
 			// console.log('right');
-			keys.right.pressed = true;
-			lastKey = 'right';
+			if (player.startAnimation == false && player.doingSomething == false) {
+				keys.right.pressed = true;
+				lastKey = 'right';
+			}
+			break;
+
+		case ' ':
+			if (player.startAnimation == false && player.doingSomething == false) {
+				actionKeys.space.pressed = true;
+			}
+			break;
+
+		case 'b':
+			// console.log('b');
+			if (player.startAnimation == false && player.doingSomething == false) {
+				actionKeys.b.pressed = true;
+			}
+			break;
+
+		case 's':
+			// console.log('s');
+			if (player.startAnimation == false && player.doingSomething == false) {
+				actionKeys.s.pressed = true;
+			}
 			break;
 	}
 	// console.log(keys.right.pressed);
@@ -628,12 +718,27 @@ window.addEventListener('keyup', (event) => {
 		case 'ArrowRight':
 			// console.log('right');
 			keys.right.pressed = false;
+			break;
 
+		case ' ':
+			console.log('space');
+			actionKeys.space.pressed = false;
+			break;
+
+		case 'b':
+			console.log('space');
+			actionKeys.b.pressed = false;
+			break;
+
+		case 's':
+			console.log('space');
+			actionKeys.s.pressed = false;
 			break;
 	}
 	// console.log(keys.right.pressed);
 });
 
+// export default actionKeys;
 /*
 function calcPics() {
 	let start = {

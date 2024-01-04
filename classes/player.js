@@ -35,7 +35,7 @@ let playerBiteRightImage = createImage(spriteBiteRight);
 
 const canvas = document.querySelector('canvas');
 const c = canvas.getContext('2d');
-const gravity = 1; //"9"
+const gravity = 1;
 
 /*****Player class ******/
 class Player {
@@ -53,7 +53,6 @@ class Player {
 		this.speed = 5;
 		this.width = 380;
 		this.height = 150 * 4;
-		// this.image = playerStartImage;
 		this.startAnimation = true;
 		this.doingSomething = false;
 		this.frames = 0;
@@ -76,9 +75,36 @@ class Player {
 				cropWidth: 380,
 				width: 380,
 			},
+			bite: {
+				right: playerBiteRightImage,
+				left: playerBiteLeftImage,
+
+				cropWidth: 380,
+				width: 380,
+			},
+			swipe: {
+				right: playerSwipeRightImage,
+				left: playerSwipeLeftImage,
+
+				cropWidth: 380,
+				width: 380,
+			},
+			punch: {
+				right: playerPunchRightImage,
+				left: playerPunchLeftImage,
+
+				cropWidth: 380,
+				width: 380,
+			},
 		};
 		this.currentSprite = playerStartImage;
+		this.lastDirection = 'right';
 		this.currentCropWidth = 380;
+		this.action = {
+			punch: false,
+			bite: false,
+			swipe: false,
+		};
 	}
 
 	//the player methods
@@ -105,7 +131,7 @@ class Player {
 
 	update() {
 		this.frames++; // incremementing this number by 1 will create a multiplier for the x position of the sprite sheet for animation
-		if (this.frames % 10 == 0) {
+		if (this.frames % 7 == 0) {
 			this.spriteTimer++;
 		}
 
@@ -115,14 +141,42 @@ class Player {
 			this.frames = 0;
 			this.spriteTimer = 0;
 			this.currentSprite = this.sprites.stand.right;
-		}
-		if (this.spriteTimer == 13 && (this.currentSprite == this.sprites.stand.right || this.currentSprite == this.sprites.stand.left)) {
-			// reset the frames value to zero once the value for frames equals the number of sprites for that animation
+		} else if (this.spriteTimer == 13 && (this.currentSprite == this.sprites.stand.right || this.currentSprite == this.sprites.stand.left)) {
 			this.frames = 0;
 			this.spriteTimer = 0;
 		} else if (this.spriteTimer == 10 && (this.currentSprite == this.sprites.run.right || this.currentSprite == this.sprites.run.left)) {
 			this.frames = 0;
 			this.spriteTimer = 0;
+		} else if (this.spriteTimer == 3 && (this.currentSprite == this.sprites.punch.right || this.currentSprite == this.sprites.punch.left)) {
+			this.frames = 0;
+			this.spriteTimer = 0;
+			this.doingSomething = false;
+			this.action.punch = false;
+			if (this.lastDirection == 'left') {
+				this.currentSprite = this.sprites.stand.left;
+			} else if (this.lastDirection == 'right') {
+				this.currentSprite = this.sprites.stand.right;
+			}
+		} else if (this.spriteTimer == 8 && (this.currentSprite == this.sprites.bite.right || this.currentSprite == this.sprites.bite.left)) {
+			this.frames = 0;
+			this.spriteTimer = 0;
+			this.doingSomething = false;
+			this.action.bite = false;
+			if (this.lastDirection == 'left') {
+				this.currentSprite = this.sprites.stand.left;
+			} else if (this.lastDirection == 'right') {
+				this.currentSprite = this.sprites.stand.right;
+			}
+		} else if (this.spriteTimer == 7 && (this.currentSprite == this.sprites.swipe.right || this.currentSprite == this.sprites.swipe.left)) {
+			this.frames = 0;
+			this.spriteTimer = 0;
+			this.doingSomething = false;
+			this.action.swipe = false;
+			if (this.lastDirection == 'left') {
+				this.currentSprite = this.sprites.stand.left;
+			} else if (this.lastDirection == 'right') {
+				this.currentSprite = this.sprites.stand.right;
+			}
 		}
 
 		//"2"
