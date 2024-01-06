@@ -14,6 +14,7 @@ import GenericObject from './classes/genericObjects';
 import Player from './classes/player';
 import Platform from './classes/platform';
 
+
 const canvas = document.querySelector('canvas');
 const c = canvas.getContext('2d');
 const gravity = 1;
@@ -118,7 +119,7 @@ let lastDirection = {
 };
 //Tracks the players change in canvas x-position from its original position
 let scrollOffset = 0;
-
+let man = false;
 function main() {
 	init();
 	animate();
@@ -130,6 +131,10 @@ main();
 function init() {
 	player = new Player();
 
+	// if (player.playedStaringSound == false) {
+	// 	player.playedStaringSound = true;
+	// 	player.sound.transform.play();
+	// }
 	//The platform constructor accepts an x and y value for the platform anchor, and the image source
 	platforms = [
 		// new Platform(platformImage.width * 4 + 300 - 2 + platformImage.width - platformSmallTallImage.width, 270, platformSmallTallImage), //
@@ -230,6 +235,8 @@ function animate() {
 	//upadate the player spite frame number and crop position, then draws the sprite onto the screen, then updates its positon value
 	player.update();
 
+
+
 	//draw the support beams
 	supportBeams.forEach((beam) => {
 		beam.draw();
@@ -263,6 +270,11 @@ function animate() {
 			direction.downLeft = false;
 			direction.stop = false;
 			// console.log('right pressed');
+
+			if (player.step.one == false) {
+				player.step.one = true;
+				player.sound.woodStep.play();
+			}
 		}
 		//left
 		else if (keys.right.pressed == false && keys.left.pressed == true && keys.up.pressed == false && keys.down.pressed == false) {
@@ -276,6 +288,11 @@ function animate() {
 			direction.downLeft = false;
 			direction.stop = false;
 			// console.log('left pressed');
+
+			if (player.step.one == false) {
+				player.step.one = true;
+				player.sound.woodStep.play();
+			}
 		}
 		//up
 		else if (keys.right.pressed == false && keys.left.pressed == false && keys.up.pressed == true && keys.down.pressed == false) {
@@ -289,6 +306,11 @@ function animate() {
 			direction.downLeft = false;
 			direction.stop = false;
 			// console.log('up pressed');
+
+			if (player.step.one == false) {
+				player.step.one = true;
+				player.sound.woodStep.play();
+			}
 		}
 		//down
 		else if (keys.right.pressed == false && keys.left.pressed == false && keys.up.pressed == false && keys.down.pressed == true) {
@@ -302,6 +324,11 @@ function animate() {
 			direction.downLeft = false;
 			direction.stop = false;
 			// console.log('down pressed');
+
+			if (player.step.one == false) {
+				player.step.one = true;
+				player.sound.woodStep.play();
+			}
 		}
 		//up right
 		else if (keys.right.pressed == true && keys.left.pressed == false && keys.up.pressed == true && keys.down.pressed == false) {
@@ -315,6 +342,11 @@ function animate() {
 			direction.upLeft = false;
 			direction.downLeft = false;
 			direction.stop = false;
+
+			if (player.step.one == false) {
+				player.step.one = true;
+				player.sound.woodStep.play();
+			}
 		}
 		//down right
 		else if (keys.right.pressed == true && keys.left.pressed == false && keys.up.pressed == false && keys.down.pressed == true) {
@@ -328,6 +360,11 @@ function animate() {
 			direction.upLeft = false;
 			direction.downLeft = false;
 			direction.stop = false;
+
+			if (player.step.one == false) {
+				player.step.one = true;
+				player.sound.woodStep.play();
+			}
 		}
 		//up left
 		else if (keys.right.pressed == false && keys.left.pressed == true && keys.up.pressed == true && keys.down.pressed == false) {
@@ -341,6 +378,11 @@ function animate() {
 			direction.upLeft = true;
 			direction.downLeft = false;
 			direction.stop = false;
+
+			if (player.step.one == false) {
+				player.step.one = true;
+				player.sound.woodStep.play();
+			}
 		}
 		//down left
 		else if (keys.right.pressed == false && keys.left.pressed == true && keys.up.pressed == false && keys.down.pressed == true) {
@@ -354,6 +396,11 @@ function animate() {
 			direction.upLeft = false;
 			direction.downLeft = true;
 			direction.stop = false;
+
+			if (player.step.one == false) {
+				player.step.one = true;
+				player.sound.woodStep.play();
+			}
 		}
 		//nothing pressed
 		else if (keys.right.pressed == false && keys.left.pressed == false && keys.up.pressed == false && keys.down.pressed == false) {
@@ -367,18 +414,9 @@ function animate() {
 			direction.upLeft = false;
 			direction.downLeft = false;
 			direction.stop = true;
+
+			player.step.one == false;
 		}
-	} else {
-		// console.log('Nothing pressed');
-		direction.right = false;
-		direction.left = false;
-		direction.up = false;
-		direction.down = false;
-		direction.upRight = false;
-		direction.downRight = false;
-		direction.upLeft = false;
-		direction.downLeft = false;
-		direction.stop = true;
 	}
 	/*************lateral movement and platform scrolling **************/
 	// if the right arrow key is pressed and the player x-position is less than 400 px, make the player x-velocity (change in position) +5
@@ -388,15 +426,15 @@ function animate() {
 	//if the right key is pressed, subtract 5 from the platform x-position value
 	//if the left key is pressed, add 5 to the platform x-position value
 	if (player.doingSomething == false) {
-		if (direction.right == true && player.position.x < 400) {
+		if (direction.right == true && player.position.x < 100) {
 			player.velocity.x = player.speed;
-		} else if ((direction.upRight == true || direction.downRight == true) && player.position.x < 400) {
+		} else if ((direction.upRight == true || direction.downRight == true) && player.position.x < 100) {
 			player.velocity.x = player.speed / 2;
-		} else if ((direction.left == true && player.position.x > 100) || (direction.left == true && scrollOffset == 0 && player.position.x > 0)) {
+		} else if ((direction.left == true && player.position.x > 0) || (direction.left == true && scrollOffset == 0 && player.position.x > -380)) {
 			player.velocity.x = -player.speed;
 		} else if (
-			((direction.upLeft == true || direction.downLeft == true) && player.position.x > 100) ||
-			((direction.upLeft == true || direction.downLeft == true) && scrollOffset == 0 && player.position.x > 0)
+			((direction.upLeft == true || direction.downLeft == true) && player.position.x > 0) ||
+			((direction.upLeft == true || direction.downLeft == true) && scrollOffset == 0 && player.position.x > -380)
 		) {
 			player.velocity.x = -player.speed / 2;
 		} else if (
@@ -473,32 +511,34 @@ function animate() {
 	/***********Vertical movement **************/
 
 	// console.log('player y position', player.position.y);
-	if (direction.up == true && player.position.y >= canvas.height - 480) {
-		player.velocity.y = -player.speed;
+	if (player.doingSomething == false) {
+		if (direction.up == true && player.position.y >= canvas.height - 480) {
+			player.velocity.y = -player.speed;
 
-		// console.log('go up. Player position :', player.position);
-	} else if ((direction.upRight == true || direction.upLeft == true) && player.position.y >= canvas.height - 480) {
-		player.velocity.y = -player.speed / 2;
-		// console.log('go angled up. Player position :', player.position);
-	} else if (direction.down == true && player.position.y + player.height - 290 <= canvas.height) {
-		player.velocity.y = player.speed;
-		// console.log('go down. Player position :', player.position);
-	} else if ((direction.downRight == true || direction.downLeft == true) && player.position.y + player.height - 290 <= canvas.height) {
-		player.velocity.y = player.speed / 2;
-		// console.log('go angled down. Player position :', player.position);
-	} else if (
-		direction.up == false &&
-		direction.upRight == false &&
-		direction.upLeft == false &&
-		direction.down == false &&
-		direction.downRight == false &&
-		direction.downLeft == false
-	) {
-		player.velocity.y = 0;
-	} else {
-		player.velocity.y = 0;
+			// console.log('go up. Player position :', player.position);
+		} else if ((direction.upRight == true || direction.upLeft == true) && player.position.y >= canvas.height - 480) {
+			player.velocity.y = -player.speed / 2;
+
+			// console.log('go angled up. Player position :', player.position);
+		} else if (direction.down == true && player.position.y + player.height - 290 <= canvas.height) {
+			player.velocity.y = player.speed;
+			// console.log('go down. Player position :', player.position);
+		} else if ((direction.downRight == true || direction.downLeft == true) && player.position.y + player.height - 290 <= canvas.height) {
+			player.velocity.y = player.speed / 2;
+			// console.log('go angled down. Player position :', player.position);
+		} else if (
+			direction.up == false &&
+			direction.upRight == false &&
+			direction.upLeft == false &&
+			direction.down == false &&
+			direction.downRight == false &&
+			direction.downLeft == false
+		) {
+			player.velocity.y = 0;
+		} else {
+			player.velocity.y = 0;
+		}
 	}
-
 	//win scenario
 	if ((scrollOffset > platformImage.width * 5 + 400 - 2, 470)) {
 		//console.log('you win');
@@ -553,6 +593,10 @@ function animate() {
 	// console.log('json equal: ', JSON.stringify(direction) === JSON.stringify(lastDirection), ' objects equal :', direction == lastDirection);
 	if (JSON.stringify(direction) !== JSON.stringify(lastDirection) && player.doingSomething == false) {
 		lastDirection = JSON.stringify(direction);
+		// if (player.step.one == false) {
+		// 	player.step.one = true;
+		// 	player.sound.woodStep.play();
+		// }
 		if (
 			(direction.up == true || direction.down == true || direction.right == true || direction.upRight == true || direction.downRight == true) &&
 			lastKey == 'right' &&
@@ -593,46 +637,70 @@ function animate() {
 	if (player.doingSomething == false) {
 		if (player.action.punch == true) {
 			player.doingSomething = true;
+
+			player.sound.punch.play();
+			player.sound.myVoice.play();
+
 			if (lastKey == 'right') {
 				player.frames = 0;
 				player.spriteTimer = 0;
 				player.currentSprite = player.sprites.punch.right;
+				player.currentCropWidth = player.sprites.punch.cropWidth;
+				player.width = player.sprites.punch.width;
 				player.velocity.y = 0;
 				player.velocity.x = 0;
 			} else if (lastKey == 'left') {
 				player.frames = 0;
 				player.spriteTimer = 0;
 				player.currentSprite = player.sprites.punch.left;
+				player.currentCropWidth = player.sprites.punch.cropWidth;
+				player.width = player.sprites.punch.width;
 				player.velocity.y = 0;
 				player.velocity.x = 0;
 			}
 		} else if (player.action.bite == true) {
 			player.doingSomething = true;
+
+			player.sound.bite.play();
+			player.sound.dragon.play();
+
 			if (lastKey == 'right') {
 				player.frames = 0;
 				player.spriteTimer = 0;
 				player.currentSprite = player.sprites.bite.right;
+				player.currentCropWidth = player.sprites.bite.cropWidth;
+				player.width = player.sprites.bite.width;
 				player.velocity.y = 0;
 				player.velocity.x = 0;
 			} else if (lastKey == 'left') {
 				player.frames = 0;
 				player.spriteTimer = 0;
 				player.currentSprite = player.sprites.bite.left;
+				player.currentCropWidth = player.sprites.bite.cropWidth;
+				player.width = player.sprites.bite.width;
 				player.velocity.y = 0;
 				player.velocity.x = 0;
 			}
 		} else if (player.action.swipe == true) {
 			player.doingSomething = true;
+
+			player.sound.swipe.play();
+			player.sound.wetFart.play();
+
 			if (lastKey == 'right') {
 				player.frames = 0;
 				player.spriteTimer = 0;
 				player.currentSprite = player.sprites.swipe.right;
+				player.currentCropWidth = player.sprites.swipe.cropWidth;
+				player.width = player.sprites.swipe.width;
 				player.velocity.y = 0;
 				player.velocity.x = 0;
 			} else if (lastKey == 'left') {
 				player.frames = 0;
 				player.spriteTimer = 0;
 				player.currentSprite = player.sprites.swipe.left;
+				player.currentCropWidth = player.sprites.swipe.cropWidth;
+				player.width = player.sprites.swipe.width;
 				player.velocity.y = 0;
 				player.velocity.x = 0;
 			}
@@ -738,88 +806,88 @@ window.addEventListener('keyup', (event) => {
 	// console.log(keys.right.pressed);
 });
 
-// export default actionKeys;
-/*
-function calcPics() {
-	let start = {
-		pics: 20,
-		width: 7600,
-		name: 'start',
-	};
 
-	let idle = {
-		pics: 13,
-		width: 4940,
-		name: 'idle',
-	};
 
-	let bite = {
-		pics: 8,
-		width: 3040,
-		name: 'bite',
-	};
+// function calcPics() {
+// 	let start = {
+// 		pics: 20,
+// 		width: 900 * 20 + 900 / 2,
+// 		name: 'start',
+// 	};
 
-	let swipe = {
-		pics: 7,
-		width: 2660,
-		name: 'swipe',
-	};
+// 	let idle = {
+// 		pics: 13,
+// 		width: 900 * 13 + 900 / 2,
+// 		name: 'idle',
+// 	};
 
-	let punch = {
-		pics: 3,
-		width: 1140,
-		name: 'punch',
-	};
+// 	let bite = {
+// 		pics: 8,
+// 		width: 900 * 8 + 900 / 2,
+// 		name: 'bite',
+// 	};
 
-	let special = {
-		pics: 18,
-		width: 6840,
-		name: 'special',
-	};
+// 	let swipe = {
+// 		pics: 7,
+// 		width: 900 * 7 + 900 / 2,
+// 		name: 'swipe',
+// 	};
 
-	let crawl = {
-		pics: 9,
-		width: 3420,
-		name: 'crawl',
-	};
+// 	let punch = {
+// 		pics: 3,
+// 		width: 900 * 3 + 900 / 2,
+// 		name: 'punch',
+// 	};
 
-	let walk = {
-		pics: 10,
-		width: 3800,
-		name: 'walk',
-	};
+// 	let special = {
+// 		pics: 18,
+// 		width: 800 * 18 + 900 / 2,
+// 		name: 'special',
+// 	};
 
-	let currentSelection = start;
+// 	let crawl = {
+// 		pics: 9,
+// 		width: 900 * 9 + 900 / 2,
+// 		name: 'crawl',
+// 	};
 
-	let pics = currentSelection.pics;
-	console.log('');
-	console.log('');
-	console.log('sprite sheet dimensions for: ', currentSelection.pics, ' ', currentSelection.name, ' pics.');
-	console.log('width: ', currentSelection.width);
-	console.log('height: 200');
+// 	let walk = {
+// 		pics: 10,
+// 		width: 900 * 10 + 900 / 2,
+// 		name: 'walk',
+// 	};
 
-	if (currentSelection == walk) {
-		for (let i = 0; i < pics; i++) {
-			let leftFootFacingRight = 380 * i + 380 / 2 - 25 + 40;
-			console.log('Image ', i + 1, ' Facing right, booty: ', leftFootFacingRight);
-		}
-		console.log('------------------');
-		for (let i = 0; i < pics; i++) {
-			let rightFootFacingLeft = 380 * i + 380 / 2 + 25 - 40;
-			console.log('Image ', i + 1, ' Facing left, booty: ', rightFootFacingLeft);
-		}
-	} else {
-		for (let i = 0; i < pics; i++) {
-			let leftFootFacingRight = 380 * i + 380 / 2 - 25;
-			console.log('Image ', i + 1, ' Facing right, left foot: ', leftFootFacingRight);
-		}
-		console.log('------------------');
-		for (let i = 0; i < pics; i++) {
-			let rightFootFacingLeft = 380 * i + 380 / 2 + 25;
-			console.log('Image ', i + 1, ' Facing left, right foot: ', rightFootFacingLeft);
-		}
-	}
-}
+// 	let currentSelection = swipe;
 
-calcPics();
-*/
+// 	let pics = currentSelection.pics;
+// 	console.log('');
+// 	console.log('');
+// 	console.log('sprite sheet dimensions for: ', currentSelection.pics, ' ', currentSelection.name, ' pics.');
+// 	console.log('width: ', currentSelection.width);
+// 	console.log('height: 200');
+
+// 	// calc left foot at center of a 900 image
+// 	if (currentSelection == walk) {
+// 		for (let i = 0; i < pics; i++) {
+// 			let booty = 900 * i + 900 / 2 + 40;
+// 			console.log('Image ', i + 1, 'booty: ', booty);
+// 		}
+// 	} else if (currentSelection == bite) {
+// 		for (let i = 0; i < pics; i++) {
+// 			let leftSideFootFacingRight = 900 * i + 900 / 2;
+// 			console.log('Image ', i + 1, 'outside of left foot when facing right: ', leftSideFootFacingRight);
+// 		}
+// 		console.log('--------------');
+// 		for (let i = 0; i < pics; i++) {
+// 			let rightSideFootFacingleft = 900 * i + 900 / 2 + 104;
+// 			console.log('Image ', i + 1, 'outside of right foot when facing left: ', rightSideFootFacingleft);
+// 		}
+// 	} else {
+// 		for (let i = 0; i < pics; i++) {
+// 			let leftSideFoot = 900 * i + 900 / 2;
+// 			console.log('Image ', i + 1, 'Outside of left side foot: ', leftSideFoot);
+// 		}
+// 	}
+// }
+
+// calcPics();
